@@ -1,16 +1,18 @@
 
 import React from 'react';
 import { View } from '../types';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   currentView: View;
   setView: (v: View) => void;
   isAdmin: boolean;
-  setIsAdmin: (a: boolean) => void;
+  // Fixed: Prop name updated to onLogout to match the usage in App.tsx
+  onLogout: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ currentView, setView, isAdmin, setIsAdmin }) => {
+// Fixed Navbar component to use onLogout instead of setIsAdmin
+const Navbar: React.FC<NavbarProps> = ({ currentView, setView, isAdmin, onLogout }) => {
   return (
     <header className="sticky top-0 bg-black/50 backdrop-blur-xl z-50 border-b border-white/5 py-4 px-6">
       <div className="max-w-md mx-auto flex justify-between items-center">
@@ -24,13 +26,25 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView, isAdmin, setIsAdm
           <span className="font-black text-lg tracking-tighter italic">LAYI <span className="text-[#FFB000]">CONTACT</span></span>
         </div>
         
-        <button 
-          onClick={() => setIsAdmin(!isAdmin)}
-          className={`p-2 rounded-full transition-colors ${isAdmin ? 'bg-[#FFB000]/20 text-[#FFB000]' : 'bg-white/5 text-gray-400'}`}
-          title="Mode Admin"
-        >
-          <ShieldAlert size={20} />
-        </button>
+        <div className="flex gap-2">
+          {isAdmin && (
+            <button 
+              // Fixed: Using onLogout callback which correctly resets session and admin states
+              onClick={onLogout}
+              className="p-2 rounded-full bg-red-500/10 text-red-500 transition-colors"
+              title="Déconnexion Admin"
+            >
+              <LogOut size={20} />
+            </button>
+          )}
+          <button 
+            onClick={() => setView('admin')}
+            className={`p-2 rounded-full transition-colors ${currentView === 'admin' ? 'bg-[#FFB000]/20 text-[#FFB000]' : 'bg-white/5 text-gray-400'}`}
+            title="Espace Admin"
+          >
+            <ShieldAlert size={20} />
+          </button>
+        </div>
       </div>
     </header>
   );

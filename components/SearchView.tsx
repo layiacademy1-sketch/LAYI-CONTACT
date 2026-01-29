@@ -77,8 +77,12 @@ const SearchView: React.FC<SearchViewProps> = ({ profiles, onProfileSelect }) =>
             onClick={() => onProfileSelect(profile.id)}
             className="glass-card p-5 rounded-3xl flex items-start gap-4 active:scale-95 transition-transform"
           >
-            <div className="w-14 h-14 bg-gradient-to-br from-gray-800 to-black rounded-2xl flex items-center justify-center font-bold text-xl border border-white/10">
-              {profile.snapchatHandle[0].toUpperCase()}
+            <div className="w-14 h-14 bg-gradient-to-br from-gray-800 to-black rounded-2xl flex items-center justify-center font-bold text-xl border border-white/10 overflow-hidden shrink-0">
+              {profile.imageUrl ? (
+                <img src={profile.imageUrl} alt={profile.snapchatHandle} className="w-full h-full object-cover" />
+              ) : (
+                profile.snapchatHandle[0].toUpperCase()
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1 mb-1">

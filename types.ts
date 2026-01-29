@@ -6,22 +6,43 @@ export enum Gender {
 }
 
 export enum ProfileStatus {
-  PENDING = 'pending',
   VALIDATED = 'validated',
-  REJECTED = 'rejected'
+  PENDING = 'pending'
 }
 
 export interface Profile {
   id: string;
   snapchatHandle: string;
-  category: string;
   presentation: string;
+  category: string;
   city: string;
   country: string;
   gender: Gender;
-  discount: string;
+  imageUrl: string;
   status: ProfileStatus;
+  createdAt: number;
+  // Added optional properties to fix property access errors in UI components
+  discount?: string;
+  gallery?: string[];
+  socials?: {
+    instagram?: string;
+    linkedin?: string;
+    facebook?: string;
+    youtube?: string;
+  };
+  restaurantInfo?: {
+    address?: string;
+    openingHours?: string[];
+    menuPhotos?: string[];
+  };
+}
+
+export interface News {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
   createdAt: number;
 }
 
-export type View = 'home' | 'search' | 'register' | 'admin' | 'profile';
+export type View = 'home' | 'search' | 'register' | 'admin' | 'profile' | 'news-list' | 'news-detail';

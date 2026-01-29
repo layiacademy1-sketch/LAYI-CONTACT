@@ -1,18 +1,4 @@
 
-import React from 'react';
-
-export const CATEGORIES = [
-  'Restaurant',
-  'Créateur de contenu',
-  'Plombier',
-  'Peintre',
-  'Esthétique',
-  'Coiffure',
-  'E-commerce',
-  'Sport & Fitness',
-  'Autre'
-];
-
 export const GENDER_LABELS: Record<string, string> = {
   girl: 'Fille',
   boy: 'Garçon',
@@ -20,8 +6,18 @@ export const GENDER_LABELS: Record<string, string> = {
 };
 
 export const COLORS = {
-  orange: '#FFB000', // Yellow-Orange branding
+  orange: '#FFB000',
   black: '#000000',
   white: '#FFFFFF',
-  yellow: '#FFFC00' // Classic Snapchat yellow
+  yellow: '#FFFC00'
 };
+
+export const CATEGORIES = [
+  'Influenceur',
+  'Restaurant',
+  'Nightclub',
+  'Coach',
+  'Artiste',
+  'E-commerce',
+  'Autre'
+];
