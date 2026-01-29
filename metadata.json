@@ -1,0 +1,7 @@
+{
+  "name": "LAYI-CONTACT",
+  "description": "La première plateforme française de mise en relation de contacts Snapchat validés par l'équipe LAYI. Trouvez des professionnels fiables avec des réductions exclusives.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
