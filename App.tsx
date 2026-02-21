@@ -59,11 +59,20 @@ const App: React.FC = () => {
   }, []);
 
   const handleInstallApp = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      // Instructions pour installation manuelle (iOS ou déjà installé)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      if (isIOS) {
+        alert("Pour installer LAYi sur votre iPhone :\n\n1. Appuyez sur le bouton 'Partager' en bas de votre écran (le carré avec une flèche).\n2. Faites défiler vers le bas et appuyez sur 'Sur l'écran d'accueil'.\n3. Appuyez sur 'Ajouter' en haut à droite.");
+      } else {
+        alert("L'application est déjà installée ou votre navigateur ne supporte pas l'installation automatique.\n\nVous pouvez l'ajouter manuellement via le menu de votre navigateur (Paramètres > Installer l'application ou Ajouter à l'écran d'accueil).");
+      }
     }
   };
 
@@ -112,7 +121,6 @@ const App: React.FC = () => {
           onAllFormationsClick={() => setView('trust_us')}
           isMember={!!memberUser}
           onInstallApp={handleInstallApp}
-          canInstall={!!deferredPrompt}
         />;
       case 'register_introducer':
         return <RegisterIntroducerView onBack={() => setView('home')} />;
@@ -166,7 +174,6 @@ const App: React.FC = () => {
           onAllFormationsClick={() => setView('trust_us')}
           isMember={!!memberUser} 
           onInstallApp={handleInstallApp}
-          canInstall={!!deferredPrompt}
         />;
     }
   };
