@@ -26,16 +26,8 @@ const App: React.FC = () => {
   const [memberUser, setMemberUser] = useState<string | null>(null);
   const [authenticatedAdminName, setAuthenticatedAdminName] = useState<string | null>(null);
   const [selectedIntroducer, setSelectedIntroducer] = useState<Introducer | null>(null);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
     // Check for existing valid session
     const saved = localStorage.getItem(SESSION_KEY);
     if (saved) {
@@ -52,29 +44,8 @@ const App: React.FC = () => {
     }
 
     const timer = setTimeout(() => setIsAppReady(true), 2500);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
+    return () => clearTimeout(timer);
   }, []);
-
-  const handleInstallApp = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-      }
-    } else {
-      // Instructions pour installation manuelle (iOS ou déjà installé)
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-      if (isIOS) {
-        alert("Pour installer LAYi sur votre iPhone :\n\n1. Appuyez sur le bouton 'Partager' en bas de votre écran (le carré avec une flèche).\n2. Faites défiler vers le bas et appuyez sur 'Sur l'écran d'accueil'.\n3. Appuyez sur 'Ajouter' en haut à droite.");
-      } else {
-        alert("L'application est déjà installée ou votre navigateur ne supporte pas l'installation automatique.\n\nVous pouvez l'ajouter manuellement via le menu de votre navigateur (Paramètres > Installer l'application ou Ajouter à l'écran d'accueil).");
-      }
-    }
-  };
 
   const handleIntroducerSelect = (intro: Introducer) => {
     setSelectedIntroducer(intro);
@@ -120,7 +91,6 @@ const App: React.FC = () => {
           onMembershipOfferClick={() => setView('presentation')}
           onAllFormationsClick={() => setView('trust_us')}
           isMember={!!memberUser}
-          onInstallApp={handleInstallApp}
         />;
       case 'register_introducer':
         return <RegisterIntroducerView onBack={() => setView('home')} />;
@@ -173,7 +143,6 @@ const App: React.FC = () => {
           onMembershipOfferClick={() => setView('presentation')}
           onAllFormationsClick={() => setView('trust_us')}
           isMember={!!memberUser} 
-          onInstallApp={handleInstallApp}
         />;
     }
   };

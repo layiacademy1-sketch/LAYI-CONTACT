@@ -44,7 +44,7 @@ const MemberSpaceView: React.FC<MemberSpaceViewProps> = ({ memberName, initialTa
   const trainingLives = [
     { 
       title: "Formation apporteur d’affaires (Snapchat)", 
-      date: "Vendredi 20 Février", 
+      date: "Lundi 23 Février", 
       time: "21:30",
       category: "SOCIAL MEDIA",
       color: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
@@ -135,10 +135,6 @@ const MemberSpaceView: React.FC<MemberSpaceViewProps> = ({ memberName, initialTa
         {activeTab === 'events' && (
           <div className="space-y-6">
             <div className="flex flex-col gap-1 px-1">
-               <div className="flex items-center gap-2">
-                 <Video size={18} className="text-[#FFB000]" />
-                 <h3 className="text-sm font-black uppercase italic text-white tracking-tight">Formations apporteurs d’affaires</h3>
-               </div>
                <p className="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em] italic">Vos prochains rendez-vous exclusifs 2026</p>
             </div>
 
