@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { News } from '../types';
-import { ArrowLeft, Calendar, Share2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, MapPin } from 'lucide-react';
 
 interface NewsDetailViewProps {
   news: News;
@@ -30,8 +30,15 @@ const NewsDetailView: React.FC<NewsDetailViewProps> = ({ news, onBack }) => {
           </button>
         </div>
         <div className="absolute bottom-8 left-8 right-8">
-          <div className="inline-flex items-center gap-2 bg-[#FFB000] text-black px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
-            <Calendar size={14} /> {new Date(news.createdAt).toLocaleDateString()}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <div className="inline-flex items-center gap-2 bg-[#FFB000] text-black px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+              <Calendar size={14} /> {new Date(news.createdAt).toLocaleDateString()}
+            </div>
+            {news.city && (
+              <div className="inline-flex items-center gap-2 bg-black/50 backdrop-blur-md border border-white/10 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                <MapPin size={14} className="text-[#FFB000]" /> {news.city}
+              </div>
+            )}
           </div>
           <h1 className="text-3xl font-black uppercase italic tracking-tighter text-white leading-tight drop-shadow-lg">
             {news.title}
@@ -48,7 +55,7 @@ const NewsDetailView: React.FC<NewsDetailViewProps> = ({ news, onBack }) => {
 
         <div className="text-center pt-8">
            <p className="text-[10px] text-gray-600 font-black uppercase tracking-[0.4em]">
-            LAYI-CONTACT MAGAZINE • {new Date().getFullYear()}
+            LAYI MAGAZINE • {new Date().getFullYear()}
           </p>
         </div>
       </div>

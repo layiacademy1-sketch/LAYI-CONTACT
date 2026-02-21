@@ -1,197 +1,168 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Search, PlusCircle, ShieldCheck, Home, Lock, ArrowRight } from 'lucide-react';
-import { View, Profile, ProfileStatus, Gender, News } from './types';
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert } from 'lucide-react';
+import { View, Profile, ProfileStatus, Gender, Introducer } from './types';
 import Navbar from './components/Navbar';
 import HomeView from './components/HomeView';
-import SearchView from './components/SearchView';
-import RegistrationForm from './components/RegistrationForm';
-import AdminPanel from './components/AdminPanel';
-import ProfileDetails from './components/ProfileDetails';
-import NewsListView from './components/NewsListView';
-import NewsDetailView from './components/NewsDetailView';
+import SplashScreen from './components/SplashScreen';
+import MemberAccessView from './components/MemberAccessView';
+import MemberSpaceView from './components/MemberSpaceView';
+import PresentationView from './components/PresentationView';
+import IndividualAdminView from './components/IndividualAdminView';
+import RegisterIntroducerView from './components/RegisterIntroducerView';
+import IntroducerDetailsView from './components/IntroducerDetailsView';
+import TrainingLivesView from './components/TrainingLivesView';
+import MembershipOfferView from './components/MembershipOfferView';
+import AllFormationsView from './components/AllFormationsView';
+import TrustUsView from './components/TrustUsView';
 
-const ADMIN_CODE = "Mellina77";
+const SESSION_KEY = 'layi_member_session';
+const SESSION_DURATION = 60 * 60 * 1000; // 1 heure en millisecondes
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
-  const [profiles, setProfiles] = useState<Profile[]>(() => {
-    const saved = localStorage.getItem('layi_profiles_v2');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [news, setNews] = useState<News[]>(() => {
-    const saved = localStorage.getItem('layi_news');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [formationImage, setFormationImage] = useState<string>(() => {
-    return localStorage.getItem('layi_formation_img') || '';
-  });
+  const [pendingView, setPendingView] = useState<View | null>(null);
+  const [isAppReady, setIsAppReady] = useState(false);
+  const [memberUser, setMemberUser] = useState<string | null>(null);
+  const [authenticatedAdminName, setAuthenticatedAdminName] = useState<string | null>(null);
+  const [selectedIntroducer, setSelectedIntroducer] = useState<Introducer | null>(null);
   
-  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
-  const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [adminInputCode, setAdminInputCode] = useState('');
-
   useEffect(() => {
-    localStorage.setItem('layi_profiles_v2', JSON.stringify(profiles));
-  }, [profiles]);
+    // Check for existing valid session
+    const saved = localStorage.getItem(SESSION_KEY);
+    if (saved) {
+      try {
+        const { name, timestamp } = JSON.parse(saved);
+        if (Date.now() - timestamp < SESSION_DURATION) {
+          setMemberUser(name);
+        } else {
+          localStorage.removeItem(SESSION_KEY);
+        }
+      } catch (e) {
+        localStorage.removeItem(SESSION_KEY);
+      }
+    }
 
-  useEffect(() => {
-    localStorage.setItem('layi_news', JSON.stringify(news));
-  }, [news]);
+    const timer = setTimeout(() => setIsAppReady(true), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
-  useEffect(() => {
-    localStorage.setItem('layi_formation_img', formationImage);
-  }, [formationImage]);
-
-  const addProfile = (profile: Profile) => {
-    setProfiles(prev => [profile, ...prev]);
-    alert("Profil enregistré !");
+  const handleIntroducerSelect = (intro: Introducer) => {
+    setSelectedIntroducer(intro);
+    setView('introducer_details');
   };
 
-  const deleteProfile = (id: string) => {
-    setProfiles(prev => prev.filter(p => p.id !== id));
+  const handleTrainingLivesClick = () => {
+    setView('training_lives');
   };
 
-  const addNews = (item: News) => {
-    setNews(prev => [item, ...prev]);
-    alert("Actualité publiée !");
+  const handleLoginRequired = (targetView: View) => {
+    setPendingView(targetView);
+    setView('member_access');
   };
 
-  const deleteNews = (id: string) => {
-    setNews(prev => prev.filter(n => n.id !== id));
-  };
-
-  const handleAdminLogin = () => {
-    if (adminInputCode === ADMIN_CODE) {
-      setIsAdminAuthenticated(true);
-      setAdminInputCode('');
+  const handleMemberValidated = (name: string) => {
+    setMemberUser(name);
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ name, timestamp: Date.now() }));
+    if (pendingView) {
+      setView(pendingView);
+      setPendingView(null);
     } else {
-      alert("Code incorrect");
+      setView('member_space');
     }
   };
 
   const handleLogout = () => {
-    setIsAdminAuthenticated(false);
+    setAuthenticatedAdminName(null);
+    setMemberUser(null);
+    localStorage.removeItem(SESSION_KEY);
     setView('home');
   };
-
-  const selectedProfile = useMemo(() => 
-    profiles.find(p => p.id === selectedProfileId), 
-    [profiles, selectedProfileId]
-  );
-
-  const selectedNewsItem = useMemo(() => 
-    news.find(n => n.id === selectedNewsId), 
-    [news, selectedNewsId]
-  );
 
   const renderView = () => {
     switch (view) {
       case 'home':
         return <HomeView 
-          profiles={profiles} 
-          news={news}
-          formationImage={formationImage}
-          onProfileSelect={(id) => { setSelectedProfileId(id); setView('profile'); }}
-          onNewsSelect={(id) => { setSelectedNewsId(id); setView('news-detail'); }}
-          onSearchClick={() => setView('search')}
-          onSeeAllNews={() => setView('news-list')}
+          onRegisterIntroducer={() => setView('register_introducer')}
+          onTrainingLivesClick={handleTrainingLivesClick}
+          onMemberAccessClick={() => setView('member_access')}
+          onIntroducerDetails={handleIntroducerSelect}
+          onPresentationClick={() => setView('presentation')}
+          onMembershipOfferClick={() => setView('presentation')}
+          onAllFormationsClick={() => setView('trust_us')}
+          isMember={!!memberUser}
         />;
-      case 'search':
-        return <SearchView 
-          profiles={profiles}
-          onProfileSelect={(id) => { setSelectedProfileId(id); setView('profile'); }}
+      case 'register_introducer':
+        return <RegisterIntroducerView onBack={() => setView('home')} />;
+      case 'introducer_details':
+        return selectedIntroducer ? 
+          <IntroducerDetailsView introducer={selectedIntroducer} onBack={() => setView('home')} /> : 
+          null;
+      case 'training_lives':
+        return <TrainingLivesView 
+          onBack={() => setView('home')} 
+          isMember={!!memberUser} 
+          onLoginRequired={() => handleLoginRequired('training_lives')}
         />;
-      case 'register':
-        return <RegistrationForm />;
-      case 'news-list':
-        return <NewsListView 
-          news={news} 
-          onNewsSelect={(id) => { setSelectedNewsId(id); setView('news-detail'); }} 
+      case 'member_access':
+        return <MemberAccessView onValidated={handleMemberValidated} />;
+      case 'member_space':
+        return memberUser ? <MemberSpaceView memberName={memberUser} /> : null;
+      case 'admin':
+        return (
+          <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 animate-in fade-in slide-in-from-bottom-8 duration-700">
+             <div className="glass-card p-10 rounded-[40px] w-full max-sm space-y-6 text-center border-[#FFB000]/20">
+               <h2 className="text-2xl font-black uppercase italic text-white tracking-tighter">Accès ADMIN</h2>
+               <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-relaxed italic">Espace restreint aux administrateurs LAYI</p>
+               <button onClick={() => setView('home')} className="w-full bg-white/5 border border-white/10 py-4 rounded-2xl text-[10px] font-black uppercase">Retour Accueil</button>
+             </div>
+          </div>
+        );
+      case 'admin_individual':
+        return authenticatedAdminName ? <IndividualAdminView adminName={authenticatedAdminName} onLogout={handleLogout} /> : null;
+      case 'presentation':
+        return <PresentationView 
           onBack={() => setView('home')} 
         />;
-      case 'news-detail':
-        return selectedNewsItem ? (
-          <NewsDetailView news={selectedNewsItem} onBack={() => setView('news-list')} />
-        ) : <HomeView profiles={profiles} news={news} formationImage={formationImage} onProfileSelect={setSelectedProfileId} onNewsSelect={setSelectedNewsId} onSearchClick={() => setView('search')} onSeeAllNews={() => setView('news-list')} />;
-      case 'admin':
-        if (!isAdminAuthenticated) {
-          return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 animate-in fade-in slide-in-from-bottom-8 duration-700">
-              <div className="glass-card p-8 rounded-[32px] w-full max-w-sm space-y-6 text-center border-[#FFB000]/20">
-                <div className="mx-auto w-16 h-16 bg-[#FFB000]/10 rounded-2xl flex items-center justify-center text-[#FFB000]">
-                  <Lock size={32} />
-                </div>
-                <h2 className="text-xl font-black uppercase italic">Accès Admin</h2>
-                <div className="space-y-4">
-                  <input 
-                    type="password"
-                    placeholder="Code secret"
-                    value={adminInputCode}
-                    onChange={(e) => setAdminInputCode(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-center focus:ring-2 focus:ring-[#FFB000] outline-none transition-all font-mono"
-                    onKeyDown={(e) => e.key === 'Enter' && handleAdminLogin()}
-                  />
-                  <button 
-                    onClick={handleAdminLogin}
-                    className="w-full orange-gradient py-4 rounded-2xl font-black text-black uppercase text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform"
-                  >
-                    Se connecter <ArrowRight size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        }
-        return <AdminPanel 
-          profiles={profiles} 
-          news={news}
-          formationImage={formationImage}
-          onUpdateFormationImage={setFormationImage}
-          onAddProfile={addProfile}
-          onDeleteProfile={deleteProfile}
-          onAddNews={addNews}
-          onDeleteNews={deleteNews}
+      case 'membership_offer':
+        return <MembershipOfferView 
+          onBack={() => setView('presentation')} 
+          onViewFormations={() => setView('all_formations')}
         />;
-      case 'profile':
-        return selectedProfile ? (
-          <ProfileDetails profile={selectedProfile} onBack={() => setView('home')} />
-        ) : <div className="p-10 text-center">Profil introuvable</div>;
+      case 'all_formations':
+        return <AllFormationsView onBack={() => setView('membership_offer')} />;
+      case 'trust_us':
+        return <TrustUsView onBack={() => setView('home')} />;
       default:
-        return <HomeView profiles={profiles} news={news} formationImage={formationImage} onProfileSelect={setSelectedProfileId} onNewsSelect={setSelectedNewsId} onSearchClick={() => setView('search')} onSeeAllNews={() => setView('news-list')} />;
+        return <HomeView 
+          onRegisterIntroducer={() => setView('register_introducer')} 
+          onTrainingLivesClick={handleTrainingLivesClick} 
+          onMemberAccessClick={() => setView('member_access')} 
+          onIntroducerDetails={handleIntroducerSelect} 
+          onPresentationClick={() => setView('presentation')}
+          onMembershipOfferClick={() => setView('presentation')}
+          onAllFormationsClick={() => setView('trust_us')}
+          isMember={!!memberUser} 
+        />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-24">
-      <Navbar 
-        currentView={view} 
-        setView={setView} 
-        isAdmin={isAdminAuthenticated} 
-        onLogout={handleLogout}
-      />
-      <main className="max-w-md mx-auto px-4 pt-4">
-        {renderView()}
-      </main>
-
-      <nav className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/10 z-50">
-        <div className="max-w-md mx-auto px-6 py-3 flex justify-around items-center">
-          <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 ${view === 'home' || view === 'news-list' || view === 'news-detail' ? 'text-[#FFB000]' : 'text-gray-400'}`}>
-            <Home size={22} /><span className="text-[10px] uppercase font-bold tracking-wider">Accueil</span>
-          </button>
-          <button onClick={() => setView('search')} className={`flex flex-col items-center gap-1 ${view === 'search' || view === 'profile' ? 'text-[#FFB000]' : 'text-gray-400'}`}>
-            <Search size={22} /><span className="text-[10px] uppercase font-bold tracking-wider">Trouver</span>
-          </button>
-          <button onClick={() => setView('register')} className="flex flex-col items-center gap-1">
-            <div className="bg-[#FFB000] p-3 rounded-full shadow-lg border-4 border-black -mt-8"><PlusCircle size={28} className="text-white" /></div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#FFB000]">Contact</span>
-          </button>
-          <button onClick={() => setView('admin')} className={`flex flex-col items-center gap-1 ${view === 'admin' ? 'text-[#FFB000]' : 'text-gray-400'}`}>
-            <ShieldCheck size={22} /><span className="text-[10px] uppercase font-bold tracking-wider">Admin</span>
-          </button>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-[#FFB000] selection:text-black pb-10">
+      <SplashScreen />
+      {isAppReady && (
+        <>
+          <Navbar 
+            currentView={view} 
+            setView={setView} 
+            isAdmin={!!authenticatedAdminName || !!memberUser}
+            onLogout={handleLogout}
+          />
+          <main className="max-w-md mx-auto pt-6 px-4">
+            {renderView()}
+          </main>
+        </>
+      )}
     </div>
   );
 };

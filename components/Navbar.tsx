@@ -7,11 +7,9 @@ interface NavbarProps {
   currentView: View;
   setView: (v: View) => void;
   isAdmin: boolean;
-  // Fixed: Prop name updated to onLogout to match the usage in App.tsx
   onLogout: () => void;
 }
 
-// Fixed Navbar component to use onLogout instead of setIsAdmin
 const Navbar: React.FC<NavbarProps> = ({ currentView, setView, isAdmin, onLogout }) => {
   return (
     <header className="sticky top-0 bg-black/50 backdrop-blur-xl z-50 border-b border-white/5 py-4 px-6">
@@ -23,13 +21,12 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView, isAdmin, onLogout
           <div className="bg-[#FFB000] w-8 h-8 rounded-lg flex items-center justify-center font-black text-black text-xl italic shadow-lg shadow-[#FFB000]/20">
             L
           </div>
-          <span className="font-black text-lg tracking-tighter italic">LAYI <span className="text-[#FFB000]">CONTACT</span></span>
+          <span className="font-black text-lg tracking-tighter italic">LAYI</span>
         </div>
         
         <div className="flex gap-2">
           {isAdmin && (
             <button 
-              // Fixed: Using onLogout callback which correctly resets session and admin states
               onClick={onLogout}
               className="p-2 rounded-full bg-red-500/10 text-red-500 transition-colors"
               title="Déconnexion Admin"

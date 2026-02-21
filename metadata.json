@@ -1,6 +1,6 @@
 {
-  "name": "LAYI-CONTACT",
-  "description": "LA CONFIANCE C'EST ICI la plateforme n°1 pour mettre en relation des professionnels Snapchat fiables, en France et à l’international.",
+  "name": "LAYI",
+  "description": "EXPERT. SNAPCHAT. Si tu souhaites te lancer, n’hésite pas à me contacter.",
   "requestFramePermissions": [
     "camera"
   ]

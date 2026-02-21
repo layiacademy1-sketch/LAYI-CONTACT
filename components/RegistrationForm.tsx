@@ -4,7 +4,7 @@ import { MessageCircle, ShieldCheck, Check } from 'lucide-react';
 
 const RegistrationForm: React.FC = () => {
   const handleWhatsAppClick = () => {
-    const message = encodeURIComponent("Bonjour LAYI-CONTACT, je souhaite inscrire un profil Snapchat sur la plateforme.");
+    const message = encodeURIComponent("Bonjour LAYI, je souhaite en savoir plus sur SNAPCHAT et vos services.");
     window.open(`https://wa.me/33757828250?text=${message}`, '_blank');
   };
 
@@ -24,7 +24,7 @@ const RegistrationForm: React.FC = () => {
       </h2>
       
       <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-xs font-medium">
-        Toutes les inscriptions sont gérées exclusivement par nos administrateurs pour garantir une base de données 100% fiable.
+        Toutes les inscriptions et demandes sont gérées exclusivement par nos administrateurs pour garantir une base de données 100% fiable.
       </p>
 
       <button 

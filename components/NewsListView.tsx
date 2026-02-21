@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { News } from '../types';
-import { ArrowLeft, ChevronRight, Calendar } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Calendar, MapPin } from 'lucide-react';
 
 interface NewsListViewProps {
   news: News[];
@@ -31,8 +31,15 @@ const NewsListView: React.FC<NewsListViewProps> = ({ news, onNewsSelect, onBack 
               <img src={item.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
             </div>
             <div className="p-6 space-y-3">
-              <div className="flex items-center gap-2 text-[9px] font-black uppercase text-[#FFB000] tracking-widest">
-                <Calendar size={12} /> {new Date(item.createdAt).toLocaleDateString()}
+              <div className="flex flex-wrap gap-4 text-[9px] font-black uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-[#FFB000]">
+                  <Calendar size={12} /> {new Date(item.createdAt).toLocaleDateString()}
+                </div>
+                {item.city && (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <MapPin size={12} className="text-[#FFB000]" /> {item.city}
+                  </div>
+                )}
               </div>
               <h3 className="text-xl font-black uppercase italic tracking-tighter">{item.title}</h3>
               <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed font-medium">{item.description}</p>

@@ -13,11 +13,18 @@ export const COLORS = {
 };
 
 export const CATEGORIES = [
+  'Formateur SNAPCHAT',
+  'Formatrice SNAPCHAT',
+  'Comptable - Concepteur web & personnalisation d’objets',
+  'Centre de formation',
+  'Création textile',
+  "Cours d'arabe",
+  'Décoratrice',
+  'Créateur d’applications',
   'Influenceur',
   'Restaurant',
   'Nightclub',
   'Coach',
   'Artiste',
-  'E-commerce',
-  'Autre'
+  'E-commerce'
 ];
