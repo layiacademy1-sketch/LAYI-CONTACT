@@ -26,8 +26,16 @@ const App: React.FC = () => {
   const [memberUser, setMemberUser] = useState<string | null>(null);
   const [authenticatedAdminName, setAuthenticatedAdminName] = useState<string | null>(null);
   const [selectedIntroducer, setSelectedIntroducer] = useState<Introducer | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   
   useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
     // Check for existing valid session
     const saved = localStorage.getItem(SESSION_KEY);
     if (saved) {
@@ -44,8 +52,20 @@ const App: React.FC = () => {
     }
 
     const timer = setTimeout(() => setIsAppReady(true), 2500);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
+
+  const handleInstallApp = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const handleIntroducerSelect = (intro: Introducer) => {
     setSelectedIntroducer(intro);
@@ -91,6 +111,8 @@ const App: React.FC = () => {
           onMembershipOfferClick={() => setView('presentation')}
           onAllFormationsClick={() => setView('trust_us')}
           isMember={!!memberUser}
+          onInstallApp={handleInstallApp}
+          canInstall={!!deferredPrompt}
         />;
       case 'register_introducer':
         return <RegisterIntroducerView onBack={() => setView('home')} />;
@@ -143,6 +165,8 @@ const App: React.FC = () => {
           onMembershipOfferClick={() => setView('presentation')}
           onAllFormationsClick={() => setView('trust_us')}
           isMember={!!memberUser} 
+          onInstallApp={handleInstallApp}
+          canInstall={!!deferredPrompt}
         />;
     }
   };

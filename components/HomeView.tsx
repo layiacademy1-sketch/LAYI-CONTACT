@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChevronRight, Calendar, ShieldCheck, Sparkles, Video, Eye, Star } from 'lucide-react';
+import { ChevronRight, Calendar, ShieldCheck, Sparkles, Video, Eye, Star, Download } from 'lucide-react';
 import { Introducer } from '../types';
 
 interface HomeViewProps {
@@ -12,6 +12,8 @@ interface HomeViewProps {
   onMembershipOfferClick: () => void;
   onAllFormationsClick: () => void;
   isMember?: boolean;
+  onInstallApp?: () => void;
+  canInstall?: boolean;
 }
 
 const HomeView: React.FC<HomeViewProps> = ({ 
@@ -22,7 +24,9 @@ const HomeView: React.FC<HomeViewProps> = ({
   onPresentationClick,
   onMembershipOfferClick,
   onAllFormationsClick,
-  isMember = false
+  isMember = false,
+  onInstallApp,
+  canInstall = false
 }) => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
@@ -71,6 +75,25 @@ const HomeView: React.FC<HomeViewProps> = ({
 
       {/* Action Buttons Section */}
       <section className="px-1 space-y-4">
+        {/* Install App Button */}
+        {canInstall && (
+          <button 
+            onClick={onInstallApp}
+            className="w-full glass-card p-6 rounded-[40px] border-white/10 bg-white/5 flex items-center justify-between group active:scale-95 transition-all shadow-xl"
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
+                <Download size={28} />
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Installer l'application</h3>
+                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest italic">Ajouter LAYi à votre écran d'accueil</p>
+              </div>
+            </div>
+            <ChevronRight size={24} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+          </button>
+        )}
+
         {/* Devenir Membre Shortcut */}
         <button 
           onClick={onMembershipOfferClick}
